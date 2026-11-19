@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}My attendance{% endblock %}
+{% block breadcrumb %}My attendance{% endblock %}
+{% block content %}
+<section class="page-heading"><div><span class="eyebrow">YOUR PROGRESS</span><h1>Keep showing up, {{ session.get('name').split()[0] }} <span class="wave">✳</span></h1><p>Every class is a chance to move forward.</p></div></section>
+<section class="student-overview">
+  <div class="attendance-score"><span class="score-label">OVERALL ATTENDANCE</span><strong>{{ overall_percentage }}<small>%</small></strong><div class="score-track"><span style="width: {{ overall_percentage }}%"></span></div><span class="score-caption">{{ total_present }} of {{ total_classes }} classes attended</span></div>
+  <div class="score-note"><span class="note-icon">✦</span><div><strong>Progress, not perfection.</strong><p>Check in regularly to keep an eye on how you're doing across all your subjects.</p></div></div>
+</section>
+<section class="section-heading"><div><span class="eyebrow">YOUR CLASSES</span><h2>Subject breakdown</h2></div><span class="subtle-count">{{ summary|length }} subjects</span></section>
+<section class="subject-grid student-subject-grid">
+  {% for item in summary %}{% set percentage = (item.present / item.total * 100)|round|int if item.total else 0 %}
+  <article class="subject-card student-subject-card"><div class="subject-top"><span class="subject-icon subject-icon-{{ loop.index0 % 3 }}">{{ ['✳','◈','⌘'][loop.index0 % 3] }}</span><span class="stat-label">SUBJECT {{ '%02d'|format(loop.index) }}</span></div>
+    <h3>{{ item.name }}</h3><div class="subject-percentage">{{ percentage }}<small>%</small></div><div class="progress-track"><span class="{% if percentage < 75 %}progress-low{% endif %}" style="width: {{ percentage }}%"></span></div><p class="subject-meta">{{ item.present }} present <span class="meta-dot">·</span> {{ item.total }} classes</p></article>
+  {% else %}<div class="empty-state"><h3>No subjects yet</h3><p>Your enrolled subjects will appear here.</p></div>{% endfor %}
+</section>
+<section class="report-panel recent-panel">
+  <div class="panel-heading"><div><span class="eyebrow">YOUR HISTORY</span><h2>Recent classes</h2></div><span class="subtle-count">{{ records|length }} records</span></div>
+  <div class="table-scroll"><table class="data-table">
+    <thead><tr><th>DATE</th><th>SUBJECT</th><th>STATUS</th></tr></thead>
+    <tbody>{% for record in records %}
+      <tr><td>{{ record.date|pretty_date }}</td><td><strong>{{ record.subject }}</strong></td><td><span class="status-pill status-{{ record.status }}">{{ record.status|title }}</span></td></tr>
+    {% else %}<tr><td colspan="3" class="table-empty">Your attendance history will show up here.</td></tr>{% endfor %}</tbody>
+  </table></div>
+</section>
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Overview{% endblock %}
+{% block breadcrumb %}Overview{% endblock %}
+{% block content %}
+<section class="page-heading">
+  <div><span class="eyebrow">YOUR CLASSROOM</span><h1>Good morning, {{ session.get('name').split()[0] }} <span class="wave">✳</span></h1>
+  <p>Here's what's happening with your classes.</p></div>
+  <span class="date-pill"><span>◷</span> {{ today_label }}</span>
+</section>
+<section class="stats-grid" aria-label="Class overview">
+  <article class="stat-card"><span class="stat-icon indigo">▦</span><span class="stat-label">YOUR SUBJECTS</span><strong>{{ subjects|length }}</strong><small>Active classes</small></article>
+  <article class="stat-card"><span class="stat-icon mint">♙</span><span class="stat-label">STUDENTS</span><strong>{{ total_students }}</strong><small>Across your classes</small></article>
+  <article class="stat-card"><span class="stat-icon amber">✓</span><span class="stat-label">TODAY'S ATTENDANCE</span><strong>{% set marked = subjects|sum(attribute='marked_today') %}{{ marked }}</strong><small>Student records marked</small></article>
+</section>
+<section class="section-heading"><div><span class="eyebrow">YOUR CLASSES</span><h2>All subjects</h2></div><span class="subtle-count">{{ subjects|length }} subjects</span></section>
+{% if subjects %}
+<section class="subject-grid">
+  {% for subject in subjects %}
+  <article class="subject-card">
+    <div class="subject-top"><span class="subject-icon subject-icon-{{ loop.index0 % 3 }}">{{ ['✳','◈','⌘'][loop.index0 % 3] }}</span><span class="subject-code">SUBJECT {{ '%02d'|format(loop.index) }}</span></div>
+    <h3>{{ subject.name }}</h3>
+    <p class="subject-meta"><span>♙</span> {{ subject.students }} students <span class="meta-dot">·</span> {{ subject.marked_today }} marked today</p>
+    <div class="subject-actions">
+      <a class="button button-primary" href="{{ url_for('mark_attendance', subject_id=subject.id) }}">Take attendance <span aria-hidden="true">→</span></a>
+      <a class="button button-quiet" href="{{ url_for('report', subject_id=subject.id) }}">View report</a>
+    </div>
+  </article>
+  {% endfor %}
+</section>
+{% else %}
+<div class="empty-state"><span class="empty-icon">▦</span><h3>No subjects yet</h3><p>Your school administrator can add subjects to your account.</p></div>
+{% endif %}
+{% endblock %}

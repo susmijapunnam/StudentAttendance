@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Class report{% endblock %}
+{% block breadcrumb %}<a href="{{ url_for('teacher_dashboard') }}">Subjects</a> <span>/</span> {{ subject.name }} report{% endblock %}
+{% block content %}
+<a class="back-link" href="{{ url_for('teacher_dashboard') }}">← &nbsp;All subjects</a>
+<section class="page-heading compact-heading"><div><span class="eyebrow">CLASS INSIGHTS</span><h1>{{ subject.name }} report</h1><p>A clear view of attendance across your class.</p></div>
+  <a class="button button-primary" href="{{ url_for('mark_attendance', subject_id=subject.id) }}">Take attendance <span aria-hidden="true">→</span></a>
+</section>
+{% set class_present = rows|sum(attribute='present') %}{% set class_total = rows|sum(attribute='total') %}
+<section class="stats-grid report-stats">
+  <article class="stat-card"><span class="stat-icon indigo">♙</span><span class="stat-label">STUDENTS</span><strong>{{ rows|length }}</strong><small>Enrolled in this subject</small></article>
+  <article class="stat-card"><span class="stat-icon mint">✓</span><span class="stat-label">CLASSES RECORDED</span><strong>{{ class_total }}</strong><small>Attendance records</small></article>
+  <article class="stat-card"><span class="stat-icon amber">◉</span><span class="stat-label">CLASS ATTENDANCE</span><strong>{{ (class_present / class_total * 100)|round|int if class_total else 0 }}<small class="percent-sign">%</small></strong><small>Overall present rate</small></article>
+</section>
+<section class="report-panel">
+  <div class="panel-heading"><div><span class="eyebrow">STUDENT BREAKDOWN</span><h2>Attendance by student</h2></div><span class="subtle-count">{{ rows|length }} students</span></div>
+  <div class="table-scroll"><table class="data-table">
+    <thead><tr><th>STUDENT</th><th>PRESENT</th><th>CLASSES</th><th>ATTENDANCE</th></tr></thead>
+    <tbody>{% for row in rows %}{% set percentage = (row.present / row.total * 100)|round|int if row.total else 0 %}
+      <tr><td><span class="student-cell"><span class="avatar avatar-small avatar-color-{{ loop.index0 % 4 }}">{{ row.name[0]|upper }}</span><strong>{{ row.name }}</strong></span></td>
+        <td>{{ row.present }}</td><td>{{ row.total }}</td>
+        <td><span class="percentage-cell"><span class="progress-track"><span class="progress-fill {% if percentage < 75 %}progress-low{% endif %}" style="width: {{ percentage }}%"></span></span><strong>{{ percentage }}%</strong></span></td></tr>
+    {% else %}<tr><td colspan="4" class="table-empty">No students enrolled in this class.</td></tr>{% endfor %}</tbody>
+  </table></div>
+</section>
+{% endblock %}

@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Take attendance{% endblock %}
+{% block breadcrumb %}<a href="{{ url_for('teacher_dashboard') }}">Subjects</a> <span>/</span> {{ subject.name }}{% endblock %}
+{% block content %}
+<a class="back-link" href="{{ url_for('teacher_dashboard') }}">← &nbsp;All subjects</a>
+<section class="page-heading compact-heading">
+  <div><span class="eyebrow">CLASS ROSTER</span><h1>{{ subject.name }}</h1><p>Mark each student's attendance for this class.</p></div>
+  <a class="button button-quiet" href="{{ url_for('report', subject_id=subject.id) }}">View class report <span aria-hidden="true">↗</span></a>
+</section>
+<form method="get" class="date-toolbar">
+  <label for="date">CLASS DATE</label>
+  <input id="date" type="date" name="date" value="{{ day }}" max="{{ today_iso }}">
+  <button class="button button-quiet" type="submit">Go to date</button>
+  <span class="toolbar-note">{{ students|length }} students enrolled</span>
+</form>
+<form method="post" class="roster-form">
+  <input type="hidden" name="date" value="{{ day }}">
+  <div class="roster-heading"><div><span class="eyebrow">ATTENDANCE ROSTER</span><h2>{{ students|length }} students</h2></div><span class="date-pill">{{ day }}</span></div>
+  {% if students %}
+  <div class="table-scroll"><table class="data-table roster-table">
+    <thead><tr><th>STUDENT</th><th>STATUS</th></tr></thead>
+    <tbody>{% for student in students %}
+      <tr>
+        <td><span class="student-cell"><span class="avatar avatar-small avatar-color-{{ loop.index0 % 4 }}">{{ student.name[0]|upper }}</span><span><strong>{{ student.name }}</strong><small>Student</small></span></span></td>
+        <td><label class="select-wrap"><span class="visually-hidden">Attendance status for {{ student.name }}</span>
+          <select name="status_{{ student.id }}" required>
+            <option value="present" {% if existing.get(student.id) == 'present' %}selected{% endif %}>Present</option>
+            <option value="absent" {% if existing.get(student.id, 'absent') == 'absent' %}selected{% endif %}>Absent</option>
+          </select></label></td>
+      </tr>
+    {% endfor %}</tbody>
+  </table></div>
+  <div class="roster-footer"><span class="muted">You can update attendance later by choosing the same date.</span><button class="button button-primary" type="submit">Save attendance <span aria-hidden="true">→</span></button></div>
+  {% else %}
+  <div class="empty-state"><h3>No students enrolled</h3><p>There are no students on this class roster yet.</p></div>
+  {% endif %}
+</form>
+{% endblock %}

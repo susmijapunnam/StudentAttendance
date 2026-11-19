@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f7fb">
+  <title>{% block title %}Attendly{% endblock %} · Attendly</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div class="app-shell">
+    {% if session.get('user_id') %}
+    <aside class="sidebar">
+      <a class="brand" href="{{ url_for('index') }}">
+        <span class="brand-mark">a</span><span>attendly</span>
+      </a>
+      <div class="sidebar-label">WORKSPACE</div>
+      <nav class="side-nav" aria-label="Main navigation">
+        {% if session.get('role') == 'teacher' %}
+        <a class="nav-link {% if request.endpoint == 'teacher_dashboard' %}active{% endif %}" href="{{ url_for('teacher_dashboard') }}">
+          <span class="nav-icon">▦</span> Overview
+        </a>
+        {% else %}
+        <a class="nav-link {% if request.endpoint == 'student_dashboard' %}active{% endif %}" href="{{ url_for('student_dashboard') }}">
+          <span class="nav-icon">▦</span> My attendance
+        </a>
+        {% endif %}
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="profile">
+          <span class="avatar">{{ session.get('name', 'U')[0]|upper }}</span>
+          <span class="profile-copy"><strong>{{ session.get('name') }}</strong><small>{{ session.get('role')|title }}</small></span>
+        </div>
+        <form action="{{ url_for('logout') }}" method="post">
+          <button class="signout" type="submit"><span>↗</span> Sign out</button>
+        </form>
+      </div>
+    </aside>
+    {% endif %}
+    <main class="main-content {% if not session.get('user_id') %}main-guest{% endif %}">
+      {% if session.get('user_id') %}
+      <header class="topbar">
+        <span class="breadcrumb">Workspace <span>/</span> {% block breadcrumb %}Overview{% endblock %}</span>
+        <span class="today-label">{{ today_label }}</span>
+      </header>
+      {% endif %}
+      <div class="page-content">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% for category, message in messages %}
+          <div class="flash {{ category }}" role="status">{{ message }}</div>
+          {% endfor %}
+        {% endwith %}
+        {% block content %}{% endblock %}
+      </div>
+    </main>
+  </div>
+</body>
+</html>

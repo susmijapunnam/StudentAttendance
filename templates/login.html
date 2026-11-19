@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Welcome{% endblock %}
+{% block content %}
+<section class="login-layout">
+  <div class="login-art">
+    <a class="brand brand-light" href="{{ url_for('login') }}"><span class="brand-mark">a</span><span>attendly</span></a>
+    <div class="art-copy">
+      <span class="eyebrow eyebrow-light">A BETTER WAY TO SHOW UP</span>
+      <h1>Every day<br>counts.</h1>
+      <p>One simple place to keep classes on track and celebrate every step forward.</p>
+    </div>
+    <div class="art-decoration" aria-hidden="true">
+      <span class="deco-orbit orbit-one"></span><span class="deco-orbit orbit-two"></span>
+      <span class="deco-dot dot-one"></span><span class="deco-dot dot-two"></span>
+      <div class="deco-card"><span class="deco-check">✓</span><span><b>You're on a roll</b><small>Consistency looks good on you.</small></span></div>
+    </div>
+    <span class="art-footer">A little more present, every day.</span>
+  </div>
+  <div class="login-panel">
+    <div class="login-form-wrap">
+      <span class="eyebrow">WELCOME BACK</span>
+      <h2>Sign in to Attendly</h2>
+      <p class="muted">Use your school account to continue.</p>
+      <form class="login-form" method="post">
+        <label for="username">Username</label>
+        <input id="username" name="username" autocomplete="username" placeholder="Enter your username" required>
+        <label for="password">Password</label>
+        <input id="password" type="password" name="password" autocomplete="current-password" placeholder="Enter your password" required>
+        <button class="button button-primary button-wide" type="submit">Sign in <span aria-hidden="true">→</span></button>
+      </form>
+      <div class="demo-box">
+        <span class="demo-icon">✳</span>
+        <div><strong>Just exploring?</strong><p>Teacher <code>teacher1</code> · <code>teacher123</code><br>Student <code>student1</code> · <code>student123</code></p></div>
+      </div>
+      <p class="login-note">Demo accounts are for local testing only.</p>
+    </div>
+  </div>
+</section>
+{% endblock %}
